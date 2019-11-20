@@ -21,9 +21,28 @@
 対応方法を含め回答されています。
 
 対応は以下のようになります。
+
+~~~
+<!-- lib/todo_tutorial_web/templates/task/index.html.leex -->
+<!-- phx_valueをphx_value_idに変更 -->
+<%= for task <- @tasks do %>
+    <tr>
+      <td><%= checkbox(:task,
+                       :is_finished,
+                       phx_click: "toggle_is_finished",
+                       phx_value_id: task.id,
+                       value: task.is_finished) %></td>
+      <td><%= task.id %></td>
+      <td><%= task.name %></td>
+      <td><%= task.is_finished %></td>
+      <td><%= task.finished_at %></td>
+    </tr>
+<% end %>
+~~~
+
 ~~~elixir
-  # lib/to_tutorial_web/live/task_live.ex
-  # id引数を%{"id" => id}でマッチするように対応
+  # lib/todo_tutorial_web/live/task_live.ex
+  # 引数idを%{"id" => id}でマッチするように対応
   def handle_event("toggle_is_finished", %{"id" => id}, socket) do
     task = Todo.get_task!(id)
     Todo.update_task(task, %{is_finished: !task.is_finished})
@@ -38,6 +57,7 @@ CHANGELOG.mdの変更内容を一つずつ実施するだけです。
 
 ~~~elixir
 # lib/to_tutorial_web/endpoint.ex
+# plug Plug.Session, 以降を@session_optionsとし、connect_infoに持たせる
 defmodule TodoTutorialWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :todo_tutorial
 
